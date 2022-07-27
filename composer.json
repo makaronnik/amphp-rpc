@@ -1,0 +1,75 @@
+{
+    "name": "makaronnik/amphp-rpc",
+    "description": "PHP (8.1) Async RPC based on Amp",
+    "homepage": "https://github.com/makaronnik/amphp-rpc",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "rpc",
+        "async",
+        "amphp",
+        "php"
+    ],
+    "authors": [
+        {
+            "name": "makaronnik",
+            "email": "mkrnnk@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.1",
+        "ext-json": "*",
+
+        "amphp/amp": "v2.6.*",
+        "amphp/file": "*",
+        "amphp/socket": "*",
+        "amphp/http-client": "*",
+        "amphp/http-server": "*",
+        "amphp/serialization": "*",
+        "amphp/http-server-router": "*",
+
+        "cash/lrucache": "*",
+        "stagem/class-finder": "*",
+        "laminas/laminas-code": "*"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-latest",
+        "friendsofphp/php-cs-fixer": "*",
+        "amphp/phpunit-util": "^v2",
+        "phpunit/phpunit": "^9.5",
+        "vimeo/psalm": "^v4",
+        "psalm/plugin-phpunit": "*",
+        "dg/bypass-finals": "^1.3",
+        "mockery/mockery": "^1.5",
+        "psalm/plugin-mockery": "^0.9.1"
+    },
+    "config": {
+        "process-timeout": 1800,
+        "optimize-autoloader": true
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Makaronnik\\Rpc\\": "src/"
+        },
+        "files": [
+          "src/functions.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Makaronnik\\Rpc\\Test\\": "test/"
+        },
+        "files": [
+            "vendor/hamcrest/hamcrest-php/hamcrest/Hamcrest.php"
+        ]
+    },
+    "scripts": {
+        "code-style": "@php ./vendor/bin/php-cs-fixer fix --config=./.php-cs-fixer.dist"
+    }
+}
