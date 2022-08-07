@@ -5,9 +5,6 @@
             <directory suffix=".php">src</directory>
         </include>
     </coverage>
-    <listeners>
-        <listener class="\Mockery\Adapter\Phpunit\TestListener"/>
-    </listeners>
     <testsuites>
         <testsuite name="Unit">
             <directory>test/Unit</directory>
@@ -16,4 +13,10 @@
             <directory>test/Integration</directory>
         </testsuite>
     </testsuites>
+    <listeners>
+        <listener class="\Mockery\Adapter\Phpunit\TestListener"/>
+    </listeners>
+    <extensions>
+        <extension class="Webmozarts\StrictPHPUnit\StrictPHPUnitExtension"/>
+    </extensions>
 </phpunit>
