@@ -1,6 +1,6 @@
 <?php
 
-namespace Makaronnik\Rpc\Test;
+namespace Makaronnik\Rpc\Test\Unit;
 
 use Makaronnik\Rpc\RpcRegistry;
 use PHPUnit\Framework\TestCase;
