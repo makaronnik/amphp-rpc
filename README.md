@@ -27,6 +27,9 @@ Used in the [Amphp Microservice Framework](https://github.com/makaronnik/amphp-m
 - Different response options from the server for various situations (redirect to another host/ip, try again after n seconds, etc.) and the corresponding client reaction. You can implement your own response options and their processing using the interceptor mechanism.
 - Cache for `['$host . $className . $methodName' => 'URI']` pairs to store and reuse redirect targets to reduce the number of possible intermediate requests
 
+## Creating Remote Objects
+Remote objects are, in fact, instances of classes that are generated on the side of the RPC server when an RPC request is received from an RPC client. These classes MUST be on the server side and implement their interfaces. The public methods of these interfaces MUST return an Amp\Promise object or an exception will be thrown. These methods are called Remote Procedures. They will be executed on the server as a result of calling similar methods on the proxy object on the client. In order for this to happen, the map between the remote object's interface and its implementation must be registered. This is done using the `registerRemoteObject` method of the RpcRegistry object, which is passed to the RpcServer constructor. The identical interface of the remote object MUST be on BOTH the server and the client. An identical interface on the client is needed to create the appropriate proxy for a remote object, on the client side, by calling the `createProxy` method on the RpcProxyObjectFactory.
+
 ## Examples
 You can find examples in the [examples](/examples/simple-calc) and [test](/test) directories.
 
@@ -35,7 +38,7 @@ You can find examples in the [examples](/examples/simple-calc) and [test](/test)
 ### Server side:
 - #### [RpcServer](/src/RpcServer.php) - starts a server serving RPC requests. It is preferable to configure it via [RpcServerFactory](/src/RpcServerFactory.php).
 - #### [RpcRequestHandler](/src/RpcRequestHandler.php) - handles RPC requests. Has a `registerInterceptor` method for registering request interceptors that are executed before the main request processing logic. After the request has been processed, it returns the appropriate RPC response.
-- #### [RpcRegistry](/src/RpcRegistry.php) - stores links between interfaces of remote objects and their implementations. If you do not register a remote interface association with its implementation, then the server will not know how to handle the RPС request. Passed to the server's and handler's constructors.
+- #### [RpcRegistry](/src/RpcRegistry.php) - stores links between interfaces of remote objects and their implementations. If you do not register a remote interface mapping with its implementation, then the server will not know how to handle the RPС request. Passed to the server's and handler's constructors.
 
 ### Client side:
 - #### [RpcClient](/src/RpcClient.php) - makes RPC requests to the server. It is preferable to configure it via [RpcClientBuilder](/src/RpcClientBuilder.php). Not used directly, passed to the remote object's proxy creation method.
