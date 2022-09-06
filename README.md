@@ -30,8 +30,48 @@ Used in the [Amphp Microservice Framework](https://github.com/makaronnik/amphp-m
 ## Creating Remote Objects
 Remote objects are, in fact, instances of classes that are generated on the side of the RPC server when an RPC request is received from an RPC client. These classes MUST be on the server side and implement their interfaces. The public methods of these interfaces MUST return an Amp\Promise object or an exception will be thrown. These methods are called Remote Procedures. They will be executed on the server as a result of calling similar methods on the proxy object on the client. In order for this to happen, the map between the remote object's interface and its implementation must be registered. This is done using the `registerRemoteObject` method of the RpcRegistry object, which is passed to the RpcServer constructor. The identical interface of the remote object MUST be on BOTH the server and the client. An identical interface on the client is needed to create the appropriate proxy for a remote object, on the client side, by calling the `createProxy` method on the RpcProxyObjectFactory.
 
-## Examples
-You can find examples in the [examples](/examples/simple-calc) and [test](/test) directories.
+#### Remote Object Interface example:
+```php
+use Amp\Promise;
+
+interface SimpleCalcInterface
+{
+    public function add(int $a, int $b): Promise; // remote procedure add() API
+}
+```
+
+#### Remote Object Implementation example:
+```php
+use Amp\Promise;
+use function Amp\call;
+
+class SimpleCalc implements SimpleCalcInterface
+{
+    public function add(int $a, int $b): Promise // remote procedure add() implementation
+    {
+        return call(fn (): int => $a + $b); // returns Promise<int>
+    }
+}
+```
+
+#### (Server) Registering a mapping between a remote object's interface and its implementation:
+```php
+$registry = new RpcRegistry();
+$registry->registerRemoteObject(SimpleCalcInterface::class, SimpleCalc::class);
+$requestHandler = new RpcRequestHandler(new NativeSerializer(), $registry);
+$rpcServer = (new RpcServerFactory(8181, $registry, $requestHandler))->getRpcServer();
+yield $rpcServer->start();
+```
+
+#### (Client) Creating a remote object proxy and calling its remote method:
+```php
+$rpcClient = (new RpcClientBuilder('localhost', 8181))->build();
+$proxyCalc = yield $proxyObjectsFactory->createProxy($rpcClient, SimpleCalcInterface::class);
+$addResult = yield $proxyCalc->add(5, 7); // int: 12
+```
+
+## Complete examples
+You can find complete examples in the [examples](/examples/simple-calc) and [test](/test) directories.
 
 ## Main package classes
 
